@@ -1,5 +1,5 @@
 // js/api.js
-export const GOOGLE_SHEET_CSV_URL = https://docs.google.com/spreadsheets/d/e/2PACX-1vSdOy22a2Li6l51RSKeA29mpBcSqTuPlDUuePw2QLRmerWJL--xvYX1CL9V47r-csEFIqjWveW8N2AT/pub?output=csv;
+export const GOOGLE_SHEET_CSV_URL = https://docs.google.com/spreadsheets/d/e/2PACX-1vSdOy22a2Li6l51RSKeA29mpBcSqTuPlDUuePw2QLRmerWJL--xvYX1CL9V47r-csEFIqjWveW8N2AT/pub?output=csv
 
 export function fetchAntibioticData() {
     return new Promise((resolve, reject) => {
