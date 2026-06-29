@@ -21,23 +21,3 @@ export async function fetchAntibioticData() {
     });
   });
 }
-
-        Papa.parse(GOOGLE_SHEET_CSV_URL, {
-            download: true,
-            header: true,
-            skipEmptyLines: true,
-            complete: function(results) {
-                if (results.data && results.data.length > 0) {
-                    sessionStorage.setItem('antibiotic_data', JSON.stringify(results.data));
-                    resolve(results.data);
-                } else {
-                    reject('無效的資料格式');
-                }
-            },
-            error: function(err) {
-                reject(err);
-            }
-        });
-    });
-}
- 
