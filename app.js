@@ -46,14 +46,14 @@ function switchMode(mode, btnElement) {
   if (!table) return;
   let headers = table.querySelectorAll("th");
   let rows = table.querySelectorAll("tbody tr");
-
   let keywords = {
     renal: ["CRCL", "腎"],
-    dialysis: ["透析", "HD", "CVVH"],
+    dialysis: ["透析", "HD", "CVVH", "CAPD"], 
     hepatic: ["肝", "HEPATIC"],
     pediatric: ["兒", "小兒", "PEDIATRIC"],
     ecmo: ["ECMO", "葉克膜"]
   };
+
 
   headers.forEach((th, colIndex) => {
     let headerText = th.textContent.toUpperCase();
@@ -64,6 +64,7 @@ function switchMode(mode, btnElement) {
     let isPediatricCol = keywords.pediatric.some(kw => headerText.includes(kw));
     let isEcmoCol = keywords.ecmo.some(kw => headerText.includes(kw));
 
+    // 若該欄位不包含上述任何模式的關鍵字，則視為「基本欄位」（如藥名、分類）
     let isBasicCol = !(isRenalCol || isDialysisCol || isHepaticCol || isPediatricCol || isEcmoCol); 
 
     let showColumn = false;
