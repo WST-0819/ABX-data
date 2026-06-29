@@ -1,12 +1,21 @@
-const apiUrl = "https://script.google.com/macros/s/AKfycbxkA_QDGan94rapgeMLkQWMBmagPf4M0eWTZfSvkCOxcXhKp3rRQ4STvaM-BEVcEIPKZw/exec"; 
+// 你的 Google 試算表 CSV 網址 (帶有強制更新的參數)
+const baseCSVUrl = "https://docs.google.com/spreadsheets/d/15JAyvXkQbDUWUPUpz2ZCQUw373DtBDLCbQqFdrPemCw/pub?gid=1596306221&single=true&output=csv";
 
 function loadData() {
   document.getElementById("table-container").innerHTML = "<p>資料載入中，請稍候...</p>";
   
-  fetch(apiUrl)
-    .then(response => response.json())
-    .then(data => {
-      if (data.length === 0) return;
+  // 動態加上時間戳記，避免瀏覽器讀取到舊的快取資料
+  const CSV_URL = `${baseCSVUrl}&t=${new Date().getTime()}`;
+  
+  Papa.parse(CSV_URL, {
+    download: true,
+    header: true,
+    complete: function(results) {
+      let data = results.data;
+      if (data.length === 0) {
+        document.getElementById("table-container").innerHTML = "<p>查無資料</p>";
+        return;
+      }
 
       let tableHTML = "<table id='myTable'><thead><tr>";
       let headers = Object.keys(data[0]); 
@@ -14,6 +23,9 @@ function loadData() {
       tableHTML += "</tr></thead><tbody>";
 
       data.forEach(row => {
+        // 排除因試算表空白行產生的無效資料
+        if(Object.values(row).join('').trim() === '') return; 
+        
         tableHTML += "<tr>";
         headers.forEach(header => { tableHTML += `<td>${row[header] || ""}</td>`; });
         tableHTML += "</tr>";
@@ -23,9 +35,14 @@ function loadData() {
       document.getElementById("table-container").innerHTML = tableHTML;
       document.getElementById("tabs").style.display = "block";
       
+      // 預設切換至腎功能模式
       switchMode('renal', document.querySelector('.tab-btn.active'));
-    })
-    .catch(error => { console.error(error); });
+    },
+    error: function(err) {
+      console.error(err);
+      document.getElementById("table-container").innerHTML = "<p style='color:red;'>資料載入失敗，請確認網址或網路狀態。</p>";
+    }
+  });
 }
 
 function filterTable() {
@@ -46,6 +63,8 @@ function switchMode(mode, btnElement) {
   if (!table) return;
   let headers = table.querySelectorAll("th");
   let rows = table.querySelectorAll("tbody tr");
+
+  // 模式篩選關鍵字設定（已加入 CAPD）
   let keywords = {
     renal: ["CRCL", "腎"],
     dialysis: ["透析", "HD", "CVVH", "CAPD"], 
@@ -53,7 +72,6 @@ function switchMode(mode, btnElement) {
     pediatric: ["兒", "小兒", "PEDIATRIC"],
     ecmo: ["ECMO", "葉克膜"]
   };
-
 
   headers.forEach((th, colIndex) => {
     let headerText = th.textContent.toUpperCase();
@@ -64,7 +82,6 @@ function switchMode(mode, btnElement) {
     let isPediatricCol = keywords.pediatric.some(kw => headerText.includes(kw));
     let isEcmoCol = keywords.ecmo.some(kw => headerText.includes(kw));
 
-    // 若該欄位不包含上述任何模式的關鍵字，則視為「基本欄位」（如藥名、分類）
     let isBasicCol = !(isRenalCol || isDialysisCol || isHepaticCol || isPediatricCol || isEcmoCol); 
 
     let showColumn = false;
