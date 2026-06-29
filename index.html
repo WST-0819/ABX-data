@@ -1,33 +1,33 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>抗生素查詢系統</title>
-  
-  <link rel="stylesheet" href="style.css">
-  
-  <script src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSdOy22a2Li6l51RSKeA29mpBcSqTuPlDUuePw2QLRmerWJL--xvYX1CL9V47r-csEFIqjWveW8N2AT/pub?gid=1596306221&single=true&output=csv"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抗生素臨床劑量查詢系統</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <h2>抗生素劑量查詢表</h2>
-  <button class="load-btn" onclick="loadData()">載入最新資料</button>
-  
-  <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="請輸入藥名學名或商品名搜尋...">
+    <div class="container">
+        <header>
+            <h1>抗生素臨床劑量查詢系統</h1>
+        </header>
 
-  <div class="tab-container" id="tabs" style="display:none;">
-    <button class="tab-btn active" onclick="switchMode('renal', this)">腎功能模式</button>
-    <button class="tab-btn" onclick="switchMode('dialysis', this)">透析模式</button>
-    <button class="tab-btn" onclick="switchMode('hepatic', this)">肝功能模式</button>
-    <button class="tab-btn" onclick="switchMode('pediatric', this)">小兒模式</button>
-    <button class="tab-btn" onclick="switchMode('ecmo', this)">ECMO模式</button>
-    <button class="tab-btn" onclick="switchMode('all', this)">顯示全部欄位</button>
-  </div>
+        <div class="control-panel">
+            <input type="text" id="searchInput" class="search-box" placeholder="輸入藥品名稱或成分進行快速查詢...">
+            <div class="filter-buttons" id="viewToggles">
+                <button class="btn active" data-target="adult">一般成人劑量</button>
+                <button class="btn" data-target="dialysis">血液透析 (HD/CAPD/CVVH)</button>
+                <button class="btn" data-target="ecmo">ECMO 調整</button>
+                <button class="btn" data-target="pediatric">小兒劑量</button>
+            </div>
+        </div>
 
-  <div id="table-container">
-    <p style="color: gray;">請點擊上方按鈕載入資料...</p>
-  </div>
+        <main id="drugsGrid" class="drugs-grid" data-view="adult">
+            <div class="loading-text">資料載入中...</div>
+        </main>
+    </div>
 
-  <script src="app.js"></script>
+    <script type="module" src="./js/app.js"></script>
 </body>
 </html>
